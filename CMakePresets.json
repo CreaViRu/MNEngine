@@ -1,0 +1,159 @@
+{
+    "version": 9,
+    "configurePresets": [
+        {
+            "name": "base-vcpkg",
+            "hidden": true,
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/vendored/vcpkg/scripts/buildsystems/vcpkg.cmake"
+            }
+        },
+        {
+            "name": "msvc-ninja",
+            "hidden": true,
+            "inherits": "base-vcpkg",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "toolset": {
+                "value": "host=x64",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "msvc-ninja-debug",
+            "displayName": "MSVC cl + Ninja Debug",
+            "inherits": "msvc-ninja",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "msvc-ninja-release",
+            "displayName": "MSVC cl + Ninja Release",
+            "inherits": "msvc-ninja",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "gcc-ninja",
+            "hidden": true,
+            "inherits": "base-vcpkg",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "gcc-ninja-debug",
+            "displayName": "GCC/G++ + Ninja Debug",
+            "inherits": "gcc-ninja",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "gcc-ninja-release",
+            "displayName": "GCC/G++ + Ninja Release",
+            "inherits": "gcc-ninja",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "clang-ninja",
+            "hidden": true,
+            "inherits": "base-vcpkg",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++"
+            }
+        },
+        {
+            "name": "clang-ninja-debug",
+            "displayName": "Clang + Ninja Debug",
+            "inherits": "clang-ninja",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "clang-ninja-release",
+            "displayName": "Clang + Ninja Release",
+            "inherits": "clang-ninja",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "msvc-debug",
+            "displayName": "MSVC Debug Build",
+            "configurePreset": "msvc-ninja-debug"
+        },
+        {
+            "name": "msvc-release",
+            "displayName": "MSVC Release Build",
+            "configurePreset": "msvc-ninja-release"
+        },
+        {
+            "name": "gcc-debug",
+            "displayName": "GCC Debug Build",
+            "configurePreset": "gcc-ninja-debug"
+        },
+        {
+            "name": "gcc-release",
+            "displayName": "GCC Release Build",
+            "configurePreset": "gcc-ninja-release"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "default-test",
+            "hidden": true,
+            "output": {
+                "outputOnFailure": true
+            },
+            "execution": {
+                "noTestsAction": "error"
+            }
+        },
+        {
+            "name": "msvc-test",
+            "displayName": "MSVC test",
+            "configurePreset": "msvc-ninja-debug",
+            "inherits": "default-test"
+        },
+        {
+            "name": "gcc-test",
+            "displayName": "GCC test",
+            "configurePreset": "gcc-ninja-debug",
+            "inherits": "default-test"
+        },
+        {
+            "name": "clang-test",
+            "displayName": "CLANG test",
+            "configurePreset": "clang-ninja-debug",
+            "inherits": "default-test"
+        }
+    ]
+}
